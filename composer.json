@@ -1,0 +1,19 @@
+{
+    "name": "crackertastic/fusion.router",
+    "require": {
+        "php": ">=5.4",
+        "crackertastic/fusion.collection": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:crackertastic/fusion.collection.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Fusion\\Routing\\": "src/",
+            "Fusion\\Routing\\Test\\": "test/"
+        }
+    }
+}
