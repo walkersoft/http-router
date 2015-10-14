@@ -12,8 +12,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Fusion\\Routing\\": "src/",
-            "Fusion\\Routing\\Test\\": "test/"
+            "Fusion\\Router\\": "src/",
+            "Fusion\\Router\\Test\\": "test/"
         }
     }
 }
