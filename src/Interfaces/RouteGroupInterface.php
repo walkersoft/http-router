@@ -116,9 +116,9 @@ interface RouteGroupInterface
      * Example:
      *
      *   $group->setPrefix('/books');
-     *   $group->route('/list')
-     *         ->route('/show/:id')
-     *         ->route('/edit/:id');
+     *   $group->route('/list')        //pattern: /books/list
+     *         ->route('/show/:id')    //pattern: /books/show/:id
+     *         ->route('/edit/:id');   //pattern: /books/edit/:id
      *
      * @param string $prefix Sets the prefix to assign to all route patterns.
      */
