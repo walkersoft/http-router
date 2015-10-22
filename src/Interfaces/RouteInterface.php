@@ -78,4 +78,74 @@ interface RouteInterface
      * @returns mixed
      */
     public function getAction();
+
+    /**
+     * Sets a list of parameters read in from route segments.
+     *
+     * All route parameters MUST be stored as an array.
+     *
+     * In this context the route segments are the pieces of information from
+     * the URI target separated by the slashes.  A target of `/show/book/5` has
+     * three parameters: show, book, and 5.
+     *
+     * Example:
+     *
+     *   array(
+     *     0 => 'show',
+     *     1 => 'book',
+     *     2 => 5
+     *   )
+     *
+     * Route patterns may define named parameters that takes a segment and stores
+     * it by name instead of number.  A route pattern will define a named
+     * parameter with using the`:name` format.  A pattern defined in a route as
+     * `/show/book/:id` will match the target `/show/book/5`.
+     *
+     * Example:
+     *
+     *   array(
+     *     0 => 'show',
+     *     1 => 'book',
+     *     'id' => 5
+     *   )
+     *
+     * @param array $params An array of parameters.
+     * @returns self
+     */
+    public function setParameters($params);
+
+    /**
+     * Returns all parameters as an array.
+     *
+     * @returns array
+     */
+    public function getParameters();
+
+    /**
+     * Returns a specific parameter specified by its key.
+     *
+     * @param mixed $key The key where the parameter is stored.
+     * @returns mixed
+     * @throws \InvalidArgumentException When an invalid key is given.
+     */
+    public function getParameter($key);
+
+    /**
+     * Returns all named parameters as an array.
+     *
+     * Named parameters SHOULD be considered any parameter value whose key is
+     * not numeric.
+     *
+     * @returns array
+     */
+    public function getNamedParameters();
+
+    /**
+     * Returns a specific named parameter specified by its key.
+     *
+     * @param mixed $key The key where the named parameter is stored.
+     * @returns mixed
+     * @throws \InvalidArgumentException When an invalid key is given.
+     */
+    public function getNamedParameter($key);
 }

@@ -88,7 +88,7 @@ interface RouteGroupInterface
     /**
      * Specifies default HTTP methods that will apply to any newly created Route.
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
+     * This method will return itself to facilitate chaining using a fluent interface.k
      *
      * @param array $methods An array of default HTTP methods to assign to a route
      *     when no other methods are specified.
