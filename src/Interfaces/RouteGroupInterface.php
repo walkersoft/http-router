@@ -22,13 +22,14 @@ interface RouteGroupInterface
      * supplied by the user.  A Route is capable of having no action assigned and
      * can respond to any HTTP method.
      *
-     * This method will return itself to facilitate chaining using expressive syntax.
+     * This method will return itself to facilitate chaining using a fluent interface.
      *
      * @see \Fusion\Router\Router::createRoute()
      * @param string $pattern The route pattern to be used for matching.
      * @param mixed $action Associated action to be taken.
      * @param array $methods An array with all responding methods.
      * @returns self
+     * @throws \InvalidArgumentException When any of the parameters are not valid.
      */
     public function route($pattern, $action = null, array $methods = []);
 
@@ -38,10 +39,12 @@ interface RouteGroupInterface
      * Actions are implementation-specific.  Actions may be strings that map to
      * a class name, a closure, or even an object that may be invoked directly.
      *
-     * This method will return itself to facilitate chaining using expressive syntax.
+     * This method will return itself to facilitate chaining using a fluent interface.
      *
      * @param mixed $action The action to assign.
      * @returns self
+     * @throws \InvalidArgumentException If $action is not a valid action for
+     *     a given domain context.
      */
     public function toAction($action);
 
@@ -53,11 +56,14 @@ interface RouteGroupInterface
      * different methods (GET and POST) and also two different actions (ListAction
      * and UpdateAction).
      *
-     * This method will return itself to facilitate chaining using expressive syntax.
+     * This method will return itself to facilitate chaining using a fluent interface.
      *
      * @param array $methods Array of strings representing methods that the Route
      *     will match up against.
      * @returns self
+     * @throws \InvalidArgumentException When any of $method are not valid
+     *     HTTP methods.
+     * @throws \RuntimeException When there is no route to update.
      */
     public function fromMethods(array $methods);
 
@@ -69,19 +75,24 @@ interface RouteGroupInterface
      * different methods (GET and POST) and also two different actions (ListAction
      * and UpdateAction).
      *
-     * This method will return itself to facilitate chaining using expressive syntax.
+     * This method will return itself to facilitate chaining using a fluent interface.
      *
      * @param string $method Array of strings representing methods that the Route
      *     will match up against.
      * @returns self
+     * @throws \InvalidArgumentException When $method is not a valid HTTP method.
+     * @throws \RuntimeException When there is no route to update.
      */
     public function fromMethod($method);
 
     /**
      * Specifies default HTTP methods that will apply to any newly created Route.
      *
+     * This method will return itself to facilitate chaining using a fluent interface.
+     *
      * @param array $methods An array of default HTTP methods to assign to a route
      *     when no other methods are specified.
+     * @returns self
      */
     public function setDefaultMethods(array $methods);
 
@@ -91,7 +102,12 @@ interface RouteGroupInterface
      * Useful in situations where a fallback action should be taken when a
      * specific action is not assigned with the route() or toAction() methods.
      *
+     * This method will return itself to facilitate chaining using a fluent interface.
+     *
      * @param mixed $action A default action to assign to all created routes.
+     * @returns self
+     * @throws \InvalidArgumentException If $action is not a valid action for
+     *     a given domain context.
      */
     public function setDefaultAction($action);
 
@@ -121,6 +137,7 @@ interface RouteGroupInterface
      *         ->route('/edit/:id');   //pattern: /books/edit/:id
      *
      * @param string $prefix Sets the prefix to assign to all route patterns.
+     * @throws \InvalidArgumentException If $prefix is not valid.
      */
     public function setPrefix($prefix);
 
