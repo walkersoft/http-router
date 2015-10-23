@@ -118,7 +118,7 @@ interface RouteGroupInterface
      * application it may become tedious to re-type route patterns that begin
      * with the same text.
      *
-     * For example and application that is managing books might have the following
+     * For example, an application that is managing books might have the following
      * endpoints:
      *
      *   /books/list      (lists all books)
