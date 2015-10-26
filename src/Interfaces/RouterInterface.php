@@ -43,4 +43,11 @@ interface RouterInterface
      *     instance.
      */
     public function addRoute(RouteInterface $route);
+
+    /**
+     * Gets all RouteInterface instances stored as an array.
+     *
+     * @returns array
+     */
+    public function getRoutes();
 }
