@@ -49,13 +49,12 @@ interface RouteInterface
     public function getMethods();
 
     /**
-     * Sets the action to take with this routes is selected as a match.
+     * Sets the action taken when the RouteInterface instance is a match.
      *
      * Actions are domain-specific and may be a number of different things.
      * Essentially the action will specify what will happen in the domain when
-     * the route is selected as a match.  The Route does not need to do anything
-     * beyond storing the action information.  Client code will decide what
-     * to do with the action when a route is selected as a match.
+     * the RouteInterface instance is selected as a match.  The RouteInterface
+     * instance SHOULD NOT need to do anything beyond storing the action data.
      *
      * Some examples of an action are:
      *
@@ -97,8 +96,8 @@ interface RouteInterface
      *   )
      *
      * Route patterns may define named parameters that takes a segment and stores
-     * it by name instead of number.  A route pattern will define a named
-     * parameter with using the`:name` format.  A pattern defined in a route as
+     * it by name in addition to number.  A route pattern will define a named
+     * parameter by using the`:name` format.  A pattern defined in a route as
      * `/show/book/:id` will match the target `/show/book/5`.
      *
      * Example:
@@ -109,10 +108,13 @@ interface RouteInterface
      *     'id' => 5
      *   )
      *
+     * Implementations of this interface MUST maintain the capability to locate
+     * the value of a named parameter under a numerical index if needed.
+     *
      * @param array $params An array of parameters.
      * @returns self
      */
-    public function setParameters($params);
+    public function setParameters(array $params);
 
     /**
      * Returns all parameters as an array.

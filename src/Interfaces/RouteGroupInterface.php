@@ -41,6 +41,7 @@ interface RouteGroupInterface
      *
      * This method will return itself to facilitate chaining using a fluent interface.
      *
+     * @see \Fusion\Router\Route::setAction()
      * @param mixed $action The action to assign.
      * @returns self
      * @throws \InvalidArgumentException If $action is not a valid action for
@@ -137,6 +138,7 @@ interface RouteGroupInterface
      *         ->route('/edit/:id');   //pattern: /books/edit/:id
      *
      * @param string $prefix Sets the prefix to assign to all route patterns.
+     * @returns self
      * @throws \InvalidArgumentException If $prefix is not valid.
      */
     public function setPrefix($prefix);
