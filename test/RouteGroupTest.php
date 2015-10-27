@@ -10,7 +10,9 @@ namespace Fusion\Tests;
 
 use Fusion\Router\RouteGroup;
 
-class RouteGroupTest extends PHPUnit_Framework_TestCase
+require '../vendor/autoload.php';
+
+class RouteGroupTest extends \PHPUnit_Framework_TestCase
 {
     /** @var  \Fusion\Router\RouteGroup */
     private $group;

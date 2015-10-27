@@ -13,7 +13,6 @@ use Fusion\Router\Interfaces\RouterInterface;
 
 class Router implements RouterInterface
 {
-
     /**
      * Matches a target to a RouteInterface instance and returns it.
      *

@@ -10,7 +10,9 @@ namespace Fusion\Tests;
 
 use Fusion\Router\Route;
 
-class RouteTest extends PHPUnit_Framework_TestCase
+require '../vendor/autoload.php';
+
+class RouteTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Fusion\Router\Route */
     private $route;
