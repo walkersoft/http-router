@@ -8,11 +8,39 @@
 
 namespace Fusion\Router;
 
+use Fusion\Collection\TraversableCollection;
 use Fusion\Router\Interfaces\RouteInterface;
 use Fusion\Router\Interfaces\RouterInterface;
 
 class Router implements RouterInterface
 {
+    /**
+     * Collection of RouteInterface instances.
+     *
+     * @var \Fusion\Collection\TraversableCollection
+     */
+    private $routes;
+
+    /**
+     * Constructor.
+     *
+     * Expects an implementation of a TraversableCollection to store the
+     * RoutesInterface instances.  If one is not provided a default one is
+     * created instead.
+     *
+     * @param \Fusion\Collection\TraversableCollection Storage collection.
+     */
+    public function __construct(TraversableCollection $routes = null)
+    {
+        $this->routes = $routes;
+        if(!$this->routes instanceof TraversableCollection)
+        {
+            $this->routes = new TraversableCollection();
+        }
+
+        $this->routes->addRestriction('\Fusion\Router\Interfaces\RouteInterface');
+    }
+
     /**
      * Matches a target to a RouteInterface instance and returns it.
      *
@@ -30,7 +58,25 @@ class Router implements RouterInterface
      */
     public function match($target)
     {
-        // TODO: Implement match() method.
+        $match = null;
+
+        foreach($this->routes as $route)
+        {
+            if(preg_match("#{$route->getPattern()}#i", $target) === 1)
+            {
+                $match = $route;
+                break;
+            }
+        }
+
+        if(!$match instanceof RouteInterface)
+        {
+            throw new \RuntimeException(
+                sprintf("Unable to match target '%s' to any patterns", $target)
+            );
+        }
+
+        return $match;
     }
 
     /**
@@ -49,7 +95,7 @@ class Router implements RouterInterface
      */
     public function addRoute(RouteInterface $route)
     {
-        // TODO: Implement addRoute() method.
+        $this->routes->add($route);
     }
 
     /**
@@ -59,6 +105,13 @@ class Router implements RouterInterface
      */
     public function getRoutes()
     {
-        // TODO: Implement getRoutes() method.
+        $routes = [];
+
+        foreach($this->routes as $route)
+        {
+            $routes[] = $route;
+        }
+
+        return $routes;
     }
 }

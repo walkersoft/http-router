@@ -9,9 +9,30 @@
 namespace Fusion\Router;
 
 use Fusion\Router\Interfaces\RouteGroupInterface;
+use Fusion\Router\Interfaces\RouterInterface;
 
 class RouteGroup implements RouteGroupInterface
 {
+
+    /**
+     * RouterInterface instance.
+     *
+     * @var \Fusion\Router\Interfaces\RouteInterface
+     */
+    private $router;
+
+    /**
+     * Constructor.
+     *
+     * Accepts a RouterInterface instance as a dependency to store routes added
+     * by the group.
+     *
+     * @param \Fusion\Router\Interfaces\RouterInterface
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
 
     /**
      * Creates and stores a route.

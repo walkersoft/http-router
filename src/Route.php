@@ -14,6 +14,41 @@ class Route implements RouteInterface
 {
 
     /**
+     * Route pattern.
+     *
+     * @var string
+     */
+    private $pattern;
+
+    /**
+     * Route action
+     *
+     * @var mixed
+     */
+    private $action;
+
+    /**
+     * Responding methods.
+     *
+     * @var array
+     */
+    private $methods;
+
+    /**
+     * Route parameters.
+     *
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * Route named parameters.
+     *
+     * @var array
+     */
+    private $namedParameters;
+
+    /**
      * Constructor.
      *
      * Accepts a pattern, action, list of HTTP methods and list of parameters.
@@ -25,14 +60,18 @@ class Route implements RouteInterface
      * The same goes for all parameters. The provided arguments SHOULD already
      * be filtered and/or verified higher up in client code.
      *
-     * @param string $pattern
-     * @param mixed $action
-     * @param array $methods
-     * @param array $parameters
+     * @param string $pattern The pattern used for matching a target.
+     * @param mixed $action Action that will be taken when this Route is selected
+     *     as a match.
+     * @param array $methods Array list of HTTP methods the Route can respond to.
+     * @param array $parameters Array list of parameters for the Route.
      */
-    public function Route($pattern, $action = null, array $methods = null, array $parameters = null)
+    public function Route($pattern, $action = null, array $methods = [], array $parameters = [])
     {
-
+        $this->setPattern($pattern);
+        $this->setAction($action);
+        $this->setMethods($methods);
+        $this->setParameters($parameters);
     }
 
     /**
@@ -43,11 +82,21 @@ class Route implements RouteInterface
      * using a regular expression.
      *
      * @param string $pattern The route pattern to be used for matching.
-     * @returns self
+     * @return self
+     * @throws \InvalidArgumentException When $pattern is not a valid string.
      */
     public function setPattern($pattern)
     {
-        // TODO: Implement setPattern() method.
+        if(!is_string($pattern))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Route pattern must be a string. %s given.', gettype($pattern))
+            );
+        }
+
+        $this->pattern = $pattern;
+
+        return $this;
     }
 
     /**
@@ -57,7 +106,7 @@ class Route implements RouteInterface
      */
     public function getPattern()
     {
-        // TODO: Implement getPattern() method.
+        return $this->pattern;
     }
 
     /**
@@ -71,7 +120,8 @@ class Route implements RouteInterface
      */
     public function setMethods(array $methods)
     {
-        // TODO: Implement setMethods() method.
+        $this->methods = $methods;
+        return $this;
     }
 
     /**
@@ -81,7 +131,7 @@ class Route implements RouteInterface
      */
     public function getMethods()
     {
-        // TODO: Implement getMethods() method.
+        return $this->methods;
     }
 
     /**
@@ -107,7 +157,8 @@ class Route implements RouteInterface
      */
     public function setAction($action)
     {
-        // TODO: Implement setAction() method.
+        $this->action = $action;
+        return $this;
     }
 
     /**
@@ -117,7 +168,7 @@ class Route implements RouteInterface
      */
     public function getAction()
     {
-        // TODO: Implement getAction() method.
+        return $this->action;
     }
 
     /**
@@ -158,7 +209,22 @@ class Route implements RouteInterface
      */
     public function setParameters(array $params)
     {
-        // TODO: Implement setParameters() method.
+        $this->parameters = [];
+        $this->namedParameters = [];
+        $i = 0;
+
+        foreach($params as $key => $param)
+        {
+            if(is_string($key))
+            {
+                $this->namedParameters[$key] = $param;
+            }
+
+            $this->parameters[$i] = $param;
+            ++$i;
+        }
+
+        return $this;
     }
 
     /**
@@ -168,7 +234,7 @@ class Route implements RouteInterface
      */
     public function getParameters()
     {
-        // TODO: Implement getParameters() method.
+        return $this->parameters;
     }
 
     /**
@@ -180,7 +246,14 @@ class Route implements RouteInterface
      */
     public function getParameter($key)
     {
-        // TODO: Implement getParameter() method.
+        $param = null;
+
+        if(array_key_exist($key, $this->parameters))
+        {
+            $param = $this->parameters[$key];
+        }
+
+        return $param;
     }
 
     /**
@@ -193,7 +266,7 @@ class Route implements RouteInterface
      */
     public function getNamedParameters()
     {
-        // TODO: Implement getNamedParameters() method.
+        return $this->namedParameters;
     }
 
     /**
@@ -205,6 +278,13 @@ class Route implements RouteInterface
      */
     public function getNamedParameter($key)
     {
-        // TODO: Implement getNamedParameter() method.
+        $param = null;
+
+        if(array_key_exists($key, $this->namedParameters))
+        {
+            $param = $this->namedParameters[$key];
+        }
+
+        return $param;
     }
 }

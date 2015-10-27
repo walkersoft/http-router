@@ -20,6 +20,7 @@ interface RouteInterface
      *
      * @param string $pattern The route pattern to be used for matching.
      * @returns self
+     * @throws \InvalidArgumentException When $pattern is not a valid string.
      */
     public function setPattern($pattern);
 
