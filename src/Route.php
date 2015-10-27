@@ -14,6 +14,28 @@ class Route implements RouteInterface
 {
 
     /**
+     * Constructor.
+     *
+     * Accepts a pattern, action, list of HTTP methods and list of parameters.
+     *
+     * The Route object SHOULD NOT be concerned with any parsing of the given
+     * arguments.  E.g.: The $pattern SHOULD already be in parsed for (in this
+     * case ready for regex) before being provided.
+     *
+     * The same goes for all parameters. The provided arguments SHOULD already
+     * be filtered and/or verified higher up in client code.
+     *
+     * @param string $pattern
+     * @param mixed $action
+     * @param array $methods
+     * @param array $parameters
+     */
+    public function Route($pattern, $action = null, array $methods = null, array $parameters = null)
+    {
+
+    }
+
+    /**
      * Sets the pattern that is used to match a target to the route.
      *
      * When defining routes the implementing router MUST require a pattern to be
@@ -150,10 +172,10 @@ class Route implements RouteInterface
     }
 
     /**
-     * Returns a specific parameter specified by its key.
+     * Returns a specific parameter specified by its key or null if not found.
      *
      * @param mixed $key The key where the parameter is stored.
-     * @returns mixed
+     * @returns mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getParameter($key)
@@ -175,10 +197,10 @@ class Route implements RouteInterface
     }
 
     /**
-     * Returns a specific named parameter specified by its key.
+     * Returns a specific named parameter specified by its key or null if not found.
      *
      * @param mixed $key The key where the named parameter is stored.
-     * @returns mixed
+     * @returns mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getNamedParameter($key)

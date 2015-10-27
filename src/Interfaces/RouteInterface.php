@@ -124,10 +124,10 @@ interface RouteInterface
     public function getParameters();
 
     /**
-     * Returns a specific parameter specified by its key.
+     * Returns a specific parameter at its numerical key or null if not found.
      *
-     * @param mixed $key The key where the parameter is stored.
-     * @returns mixed
+     * @param int $key The key where the parameter is stored.
+     * @returns mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getParameter($key);
@@ -143,10 +143,10 @@ interface RouteInterface
     public function getNamedParameters();
 
     /**
-     * Returns a specific named parameter specified by its key.
+     * Returns a specific named parameter at its named key or null if not found.
      *
-     * @param mixed $key The key where the named parameter is stored.
-     * @returns mixed
+     * @param string $key The key where the named parameter is stored.
+     * @returns mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getNamedParameter($key);
