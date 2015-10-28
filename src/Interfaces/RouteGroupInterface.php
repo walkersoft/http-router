@@ -46,6 +46,7 @@ interface RouteGroupInterface
      * @returns self
      * @throws \InvalidArgumentException If $action is not a valid action for
      *     a given domain context.
+     * @throws \RuntimeException When there is no route to update.
      */
     public function toAction($action);
 
@@ -62,8 +63,7 @@ interface RouteGroupInterface
      * @param array $methods Array of strings representing methods that the Route
      *     will match up against.
      * @returns self
-     * @throws \InvalidArgumentException When any of $method are not valid
-     *     HTTP methods.
+     * @throws \InvalidArgumentException When any of $method are not valid.
      * @throws \RuntimeException When there is no route to update.
      */
     public function fromMethods(array $methods);
@@ -81,7 +81,7 @@ interface RouteGroupInterface
      * @param string $method Array of strings representing methods that the Route
      *     will match up against.
      * @returns self
-     * @throws \InvalidArgumentException When $method is not a valid HTTP method.
+     * @throws \InvalidArgumentException When $method is not valid.
      * @throws \RuntimeException When there is no route to update.
      */
     public function fromMethod($method);

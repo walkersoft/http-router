@@ -8,7 +8,9 @@
 
 namespace Fusion\Router;
 
+use Fusion\Router\Interfaces\RouteFactoryInterface;
 use Fusion\Router\Interfaces\RouteGroupInterface;
+use Fusion\Router\Interfaces\RouteInterface;
 use Fusion\Router\Interfaces\RouterInterface;
 
 class RouteGroup implements RouteGroupInterface
@@ -17,9 +19,45 @@ class RouteGroup implements RouteGroupInterface
     /**
      * RouterInterface instance.
      *
-     * @var \Fusion\Router\Interfaces\RouteInterface
+     * @var \Fusion\Router\Interfaces\RouterInterface
      */
     private $router;
+
+    /**
+     * RouteFactoryInterface instance.
+     *
+     * @var \Fusion\Router\Interfaces\RouteFactoryInterface
+     */
+    private $routeFactory;
+
+    /**
+     * Currently manipulated RouteInterface collection.
+     *
+     * @var \Fusion\Router\Interfaces\RouteInterface
+     */
+    private $currentRoute;
+
+    /**
+     * Default action assignment
+     *
+     * @var mixed
+     */
+    private $defaultAction;
+
+    /**
+     * Default method(s) assignment
+     *
+     * @var array
+     */
+    private $defaultMethods;
+
+    /**
+     * Pattern prefix.
+     *
+     * @var string
+     */
+    private $prefix;
+
 
     /**
      * Constructor.
@@ -27,11 +65,18 @@ class RouteGroup implements RouteGroupInterface
      * Accepts a RouterInterface instance as a dependency to store routes added
      * by the group.
      *
-     * @param \Fusion\Router\Interfaces\RouterInterface
+     * @param \Fusion\Router\Interfaces\RouterInterface $router A RouteInterface
+     *     implementation.
+     * @param \Fusion\Router\Interfaces\RouteFactoryInterface A RouteFactoryInterface
+     *     implementation.
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, RouteFactoryInterface $factory)
     {
         $this->router = $router;
+        $this->routeFactory = $factory;
+        $this->defaultMethods = [];
+        $this->defaultAction = '';
+        $this->prefix = '';
     }
 
     /**
@@ -56,7 +101,32 @@ class RouteGroup implements RouteGroupInterface
      */
     public function route($pattern, $action = null, array $methods = [])
     {
-        // TODO: Implement route() method.
+        if(!is_string($pattern))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Route pattern must be a string. %s given.', gettype($pattern))
+            );
+        }
+
+        $route = $this->routeFactory->make($pattern, $action, $methods);
+        $id = $this->router->addRoute($route);
+        $this->currentRoute = $this->router->getRoute($id);
+
+        //Assign initial values.
+        $this->currentRoute->setAction($this->defaultAction);
+        $this->currentRoute->setMethods($this->defaultMethods);
+
+        if($action !== null)
+        {
+            $this->currentRoute->setAction($action);
+        }
+
+        if(!empty($methods))
+        {
+            $this->currentRoute->setMethods($methods);
+        }
+
+        return $this;
     }
 
     /**
@@ -72,10 +142,19 @@ class RouteGroup implements RouteGroupInterface
      * @returns self
      * @throws \InvalidArgumentException If $action is not a valid action for
      *     a given domain context.
+     * @throws \RuntimeException When there is no route to update.
      */
     public function toAction($action)
     {
-        // TODO: Implement toAction() method.
+        if(!$this->currentRoute instanceof RouteInterface)
+        {
+            throw new \RuntimeException(
+                sprintf('Unable to update the action because no route has been created yet.')
+            );
+        }
+
+        $this->currentRoute->setAction($action);
+        return $this;
     }
 
     /**
@@ -97,7 +176,15 @@ class RouteGroup implements RouteGroupInterface
      */
     public function fromMethods(array $methods)
     {
-        // TODO: Implement fromMethods() method.
+        if(!$this->currentRoute instanceof RouteInterface)
+        {
+            throw new \RuntimeException(
+                sprintf('Unable to update method(s) because no route has been created yet.')
+            );
+        }
+
+        $this->currentRoute->setMethods($methods);
+        return $this;
     }
 
     /**
@@ -113,12 +200,27 @@ class RouteGroup implements RouteGroupInterface
      * @param string $method Array of strings representing methods that the Route
      *     will match up against.
      * @returns self
-     * @throws \InvalidArgumentException When $method is not a valid HTTP method.
+     * @throws \InvalidArgumentException When $method is not valid.
      * @throws \RuntimeException When there is no route to update.
      */
     public function fromMethod($method)
     {
-        // TODO: Implement fromMethod() method.
+        if(!$this->currentRoute instanceof RouteInterface)
+        {
+            throw new \RuntimeException(
+                sprintf('Unable to update method(s) because no route has been created yet.')
+            );
+        }
+
+        if(!is_string($method))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Method must be a string. %s given.', gettype($method))
+            );
+        }
+
+        $this->currentRoute->setMethods([$method]);
+        return $this;
     }
 
     /**
@@ -132,7 +234,8 @@ class RouteGroup implements RouteGroupInterface
      */
     public function setDefaultMethods(array $methods)
     {
-        // TODO: Implement setDefaultMethods() method.
+        $this->defaultMethods = $methods;
+        return $this;
     }
 
     /**
@@ -150,7 +253,8 @@ class RouteGroup implements RouteGroupInterface
      */
     public function setDefaultAction($action)
     {
-        // TODO: Implement setDefaultAction() method.
+        $this->defaultAction = $action;
+        return $this;
     }
 
     /**
@@ -184,7 +288,15 @@ class RouteGroup implements RouteGroupInterface
      */
     public function setPrefix($prefix)
     {
-        // TODO: Implement setPrefix() method.
+        if(!is_string($prefix))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Method must be a string. %s given.', gettype($prefix))
+            );
+        }
+
+        $this->prefix = $prefix;
+        return $this;
     }
 
     /**
@@ -194,6 +306,6 @@ class RouteGroup implements RouteGroupInterface
      */
     public function createGroup()
     {
-        // TODO: Implement createGroup() method.
+        return new self($this->router, $this->routeFactory);
     }
 }

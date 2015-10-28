@@ -66,7 +66,7 @@ class Route implements RouteInterface
      * @param array $methods Array list of HTTP methods the Route can respond to.
      * @param array $parameters Array list of parameters for the Route.
      */
-    public function Route($pattern, $action = null, array $methods = [], array $parameters = [])
+    public function __construct($pattern, $action = null, array $methods = [], array $parameters = [])
     {
         $this->setPattern($pattern);
         $this->setAction($action);
@@ -246,9 +246,16 @@ class Route implements RouteInterface
      */
     public function getParameter($key)
     {
+        if(!is_int($key))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Parameter key should be an integer. %s given.', gettype($key))
+            );
+        }
+
         $param = null;
 
-        if(array_key_exist($key, $this->parameters))
+        if(array_key_exists($key, $this->parameters))
         {
             $param = $this->parameters[$key];
         }
@@ -278,6 +285,12 @@ class Route implements RouteInterface
      */
     public function getNamedParameter($key)
     {
+        if(!is_string($key))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Named parameter key must be a string. %s given', gettype($key))
+            );
+        }
         $param = null;
 
         if(array_key_exists($key, $this->namedParameters))

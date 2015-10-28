@@ -72,7 +72,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 
         //Test the named parameter at its index
         $this->assertInternalType('array', $this->route->getParameters());
-        $this->assertEquals(3, count($this->getParameters()));
+        $this->assertEquals(3, count($this->route->getParameters()));
         $this->assertEquals(5, $this->route->getParameter(2));
 
         //Test the named parameter by its name
@@ -90,7 +90,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function testNotFindingNamedParameter()
     {
         $this->assertInstanceOf('\Fusion\Router\Route', $this->route->setParameters(['show', 'books', 'id' => 5]));
-        $this->assertNull($this->route->getParameter('foo'));
+        $this->assertNull($this->route->getNamedParameter('foo'));
     }
 
     /**

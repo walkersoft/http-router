@@ -8,7 +8,10 @@
 
 namespace Fusion\Tests;
 
+use Fusion\Collection\TraversableCollection;
+use Fusion\Router\RouteFactory;
 use Fusion\Router\RouteGroup;
+use Fusion\Router\Router;
 
 require '../vendor/autoload.php';
 
@@ -19,7 +22,7 @@ class RouteGroupTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->group = new RouteGroup();
+        $this->group = new RouteGroup(new Router(new TraversableCollection()), new RouteFactory());
     }
 
     public function tearDown()
@@ -104,16 +107,6 @@ class RouteGroupTest extends \PHPUnit_Framework_TestCase
     public function testExceptionThrownWhenCreatingRoute($data)
     {
         $this->group->route($data);
-    }
-
-    /**
-     * @dataProvider invalidStringData
-     * @expectedException \InvalidArgumentException
-     */
-    public function testExceptionThrownWhenSettingAction($data)
-    {
-        $this->group->route('/foo/bar')
-                    ->toAction($data);
     }
 
     /**

@@ -90,12 +90,25 @@ class Router implements RouterInterface
      *
      * @param \Fusion\Router\Interfaces\RouteInterface $route A RouteInterface
      *     instance to store.
+     * @returns int
      * @throws \RuntimeException If there is an error storing the RouteInterface
      *     instance.
      */
     public function addRoute(RouteInterface $route)
     {
         $this->routes->add($route);
+        return $this->routes->lastId();
+    }
+
+    /**
+     * Gets a RouteInterface instance by ID number in the route collection.
+     *
+     * @param int $id The instance ID number.
+     * @return \Fusion\Router\Interfaces\RouteInterface
+     */
+    public function getRoute($id)
+    {
+        return $this->routes->find($id);
     }
 
     /**
@@ -107,9 +120,9 @@ class Router implements RouterInterface
     {
         $routes = [];
 
-        foreach($this->routes as $route)
+        foreach($this->routes as $key => $route)
         {
-            $routes[] = $route;
+            $routes[$key] = $route;
         }
 
         return $routes;
