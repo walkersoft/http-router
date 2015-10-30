@@ -8,7 +8,7 @@
 
 namespace Fusion\Tests;
 
-use Fusion\Collection\TraversableCollection;
+use Fusion\Router\RouteStore;
 use Fusion\Router\RouteFactory;
 use Fusion\Router\RouteGroup;
 use Fusion\Router\Router;
@@ -22,7 +22,7 @@ class RouteGroupTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->group = new RouteGroup(new Router(new TraversableCollection()), new RouteFactory());
+        $this->group = new RouteGroup(new Router(new RouteStore()), new RouteFactory());
     }
 
     public function tearDown()

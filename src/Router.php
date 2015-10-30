@@ -8,16 +8,16 @@
 
 namespace Fusion\Router;
 
-use Fusion\Collection\TraversableCollection;
 use Fusion\Router\Interfaces\RouteInterface;
 use Fusion\Router\Interfaces\RouterInterface;
+use Fusion\Router\Interfaces\RouteStoreInterface;
 
-class Router implements RouterInterface
+class Router implements RouterInterface, \ArrayAccess
 {
     /**
      * Collection of RouteInterface instances.
      *
-     * @var \Fusion\Collection\TraversableCollection
+     * @var \Fusion\Router\Interfaces\RouteStoreInterface
      */
     private $routes;
 
@@ -28,17 +28,12 @@ class Router implements RouterInterface
      * RoutesInterface instances.  If one is not provided a default one is
      * created instead.
      *
-     * @param \Fusion\Collection\TraversableCollection Storage collection.
+     * @param \Fusion\Router\Interfaces\RouteStoreInterface $routes
+     *     A collection where routes are stored.
      */
-    public function __construct(TraversableCollection $routes = null)
+    public function __construct(RouteStoreInterface $routes)
     {
         $this->routes = $routes;
-        if(!$this->routes instanceof TraversableCollection)
-        {
-            $this->routes = new TraversableCollection();
-        }
-
-        $this->routes->addRestriction('\Fusion\Router\Interfaces\RouteInterface');
     }
 
     /**
@@ -126,5 +121,64 @@ class Router implements RouterInterface
         }
 
         return $routes;
+    }
+
+    /**
+     * Checks if a RouteInterface instance exists at offset.
+     *
+     * The return value will be casted to boolean if non-boolean was returned.
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     * @param mixed $offset An offset to check for.
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return $this->routes->has($offset);
+    }
+
+    /**
+     * Returns the route at the given offset or null if it doesn't exist.
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     * @param mixed $offset The offset to retrieve.
+     * @return \Fusion\Router\Interfaces\RouteInterface|null
+     */
+    public function offsetGet($offset)
+    {
+        return $this->offsetExists($offset) ? $this->routes[$offset] : null;
+    }
+
+    /**
+     * Route to set at given offset.
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * @param mixed $offset The offset to assign the value to.
+     * @param mixed $value The value to set.
+     */
+    public function offsetSet($offset, $value)
+    {
+        if($this->offsetExists($offset))
+        {
+            $this->routes[$offset] = $value;
+        }
+        else
+        {
+            $this->routes[] = $value;
+        }
+    }
+
+    /**
+     * The route to unset at given offset.
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     * @param mixed $offset The offset to unset.
+     */
+    public function offsetUnset($offset)
+    {
+        if($this->offsetExists($offset))
+        {
+            unset($this->routes[$offset]);
+        }
     }
 }

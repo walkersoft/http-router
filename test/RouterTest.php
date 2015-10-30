@@ -10,6 +10,7 @@ namespace Fusion\Tests;
 
 use Fusion\Router\Route;
 use Fusion\Router\Router;
+use Fusion\Router\RouteStore;
 
 require '../vendor/autoload.php';
 
@@ -20,7 +21,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->router = new Router();
+        $this->router = new Router(new RouteStore());
     }
 
     public function tearDown()

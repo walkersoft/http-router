@@ -31,11 +31,11 @@ class RouteGroup implements RouteGroupInterface
     private $routeFactory;
 
     /**
-     * Currently manipulated RouteInterface collection.
+     * Currently manipulated RouteInterface position in the collection.
      *
-     * @var \Fusion\Router\Interfaces\RouteInterface
+     * @var int
      */
-    private $currentRoute;
+    private $currentIndex;
 
     /**
      * Default action assignment
@@ -69,6 +69,7 @@ class RouteGroup implements RouteGroupInterface
      *     implementation.
      * @param \Fusion\Router\Interfaces\RouteFactoryInterface A RouteFactoryInterface
      *     implementation.
+     *
      */
     public function __construct(RouterInterface $router, RouteFactoryInterface $factory)
     {
@@ -110,7 +111,6 @@ class RouteGroup implements RouteGroupInterface
 
         $route = $this->routeFactory->make($pattern, $action, $methods);
         $id = $this->router->addRoute($route);
-        $this->currentRoute = $this->router->getRoute($id);
 
         //Assign initial values.
         $this->currentRoute->setAction($this->defaultAction);
