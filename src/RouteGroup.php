@@ -31,11 +31,11 @@ class RouteGroup implements RouteGroupInterface
     private $routeFactory;
 
     /**
-     * Currently manipulated RouteInterface position in the collection.
+     * Currently manipulated RouteInterface instance in the collection.
      *
-     * @var int
+     * @var \Fusion\Router\Interfaces\RouteInterface
      */
-    private $currentIndex;
+    private $currentRoute;
 
     /**
      * Default action assignment
@@ -102,26 +102,31 @@ class RouteGroup implements RouteGroupInterface
      */
     public function route($pattern, $action = null, array $methods = [])
     {
-        if(!is_string($pattern))
+        if (!is_string($pattern))
         {
             throw new \InvalidArgumentException(
                 sprintf('Route pattern must be a string. %s given.', gettype($pattern))
             );
         }
 
+        if (is_string($this->prefix) && !empty($this->prefix))
+        {
+            $pattern = $this->prefix . $pattern;
+        }
+
         $route = $this->routeFactory->make($pattern, $action, $methods);
-        $id = $this->router->addRoute($route);
+        $this->currentRoute = $this->router->addRoute($route);
 
         //Assign initial values.
         $this->currentRoute->setAction($this->defaultAction);
         $this->currentRoute->setMethods($this->defaultMethods);
 
-        if($action !== null)
+        if ($action !== null)
         {
             $this->currentRoute->setAction($action);
         }
 
-        if(!empty($methods))
+        if (!empty($methods))
         {
             $this->currentRoute->setMethods($methods);
         }
@@ -146,7 +151,7 @@ class RouteGroup implements RouteGroupInterface
      */
     public function toAction($action)
     {
-        if(!$this->currentRoute instanceof RouteInterface)
+        if (!$this->currentRoute instanceof RouteInterface)
         {
             throw new \RuntimeException(
                 sprintf('Unable to update the action because no route has been created yet.')
@@ -176,7 +181,7 @@ class RouteGroup implements RouteGroupInterface
      */
     public function fromMethods(array $methods)
     {
-        if(!$this->currentRoute instanceof RouteInterface)
+        if (!$this->currentRoute instanceof RouteInterface)
         {
             throw new \RuntimeException(
                 sprintf('Unable to update method(s) because no route has been created yet.')
@@ -205,14 +210,14 @@ class RouteGroup implements RouteGroupInterface
      */
     public function fromMethod($method)
     {
-        if(!$this->currentRoute instanceof RouteInterface)
+        if (!$this->currentRoute instanceof RouteInterface)
         {
             throw new \RuntimeException(
                 sprintf('Unable to update method(s) because no route has been created yet.')
             );
         }
 
-        if(!is_string($method))
+        if (!is_string($method))
         {
             throw new \InvalidArgumentException(
                 sprintf('Method must be a string. %s given.', gettype($method))
@@ -288,7 +293,7 @@ class RouteGroup implements RouteGroupInterface
      */
     public function setPrefix($prefix)
     {
-        if(!is_string($prefix))
+        if (!is_string($prefix))
         {
             throw new \InvalidArgumentException(
                 sprintf('Method must be a string. %s given.', gettype($prefix))

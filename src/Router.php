@@ -12,7 +12,7 @@ use Fusion\Router\Interfaces\RouteInterface;
 use Fusion\Router\Interfaces\RouterInterface;
 use Fusion\Router\Interfaces\RouteStoreInterface;
 
-class Router implements RouterInterface, \ArrayAccess
+class Router implements RouterInterface
 {
     /**
      * Collection of RouteInterface instances.
@@ -85,14 +85,14 @@ class Router implements RouterInterface, \ArrayAccess
      *
      * @param \Fusion\Router\Interfaces\RouteInterface $route A RouteInterface
      *     instance to store.
-     * @returns int
+     * @returns \Fusion\Router\Interfaces\RouteInterface
      * @throws \RuntimeException If there is an error storing the RouteInterface
      *     instance.
      */
     public function addRoute(RouteInterface $route)
     {
         $this->routes->add($route);
-        return $this->routes->lastId();
+        return $this->getRoute($this->routes->lastId());
     }
 
     /**
@@ -131,7 +131,7 @@ class Router implements RouterInterface, \ArrayAccess
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
      * @return bool
-     */
+     *
     public function offsetExists($offset)
     {
         return $this->routes->has($offset);
@@ -143,7 +143,7 @@ class Router implements RouterInterface, \ArrayAccess
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
      * @return \Fusion\Router\Interfaces\RouteInterface|null
-     */
+     *
     public function offsetGet($offset)
     {
         return $this->offsetExists($offset) ? $this->routes[$offset] : null;
@@ -155,7 +155,7 @@ class Router implements RouterInterface, \ArrayAccess
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
      * @param mixed $offset The offset to assign the value to.
      * @param mixed $value The value to set.
-     */
+     *
     public function offsetSet($offset, $value)
     {
         if($this->offsetExists($offset))
@@ -173,12 +173,12 @@ class Router implements RouterInterface, \ArrayAccess
      *
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
      * @param mixed $offset The offset to unset.
-     */
+     *
     public function offsetUnset($offset)
     {
         if($this->offsetExists($offset))
         {
             unset($this->routes[$offset]);
         }
-    }
+    }*/
 }

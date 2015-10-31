@@ -111,6 +111,15 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->route->getNamedParameter($data);
     }
 
+    /**
+     * @dataProvider invalidStringKey
+     * @expectedException \InvalidArgumentException
+     */
+    public function testExceptionThrownWhenBadStringPatternGiven($data)
+    {
+        $this->route = new Route($data);
+    }
+
     public function invalidIntKey()
     {
         return [
