@@ -57,7 +57,7 @@ class Router implements RouterInterface
 
         foreach($this->routes as $route)
         {
-            if(preg_match("#{$route->getPattern()}#i", $target) === 1)
+            if(preg_match("#^{$route->getPattern()}$#i", $target) === 1)
             {
                 $match = $route;
                 break;
