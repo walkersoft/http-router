@@ -1,1 +1,0 @@
-confirm ssh working in php storm
