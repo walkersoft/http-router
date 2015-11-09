@@ -20,6 +20,33 @@ class RoutePatternParser
     /** @var string */
     private $target;
 
+    /**
+     * List of acceptable rules.
+     *
+     * @var array
+     */
+    private $rules = [
+        'alphabetic' => '[alpha]',
+        'numeric' => '[num]',
+        'alphanumeric' => '[alnum]',
+        'slug' => '[slug]'
+    ];
+
+    /**
+     * Regex translation of the rules.
+     *
+     * @var array
+     */
+    private $translations = [
+        'alphabetic' => '[a-zA-Z]+',
+        'numeric' => '[0-9]+',
+        'alphanumeric' => '[a-zA-Z0-9]+',
+        'slug' => '[a-zA-Z0-9]+[a-zA-Z0-9\-]+'
+    ];
+
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         $this->parameterMap = [];
@@ -27,6 +54,12 @@ class RoutePatternParser
 
     public function parsePattern($pattern)
     {
+        //if the pattern is only a '/', there is nothing to do
+        if ($pattern == '/')
+        {
+            return $pattern;
+        }
+
         //Clear the param map
         $this->parameterMap = [];
 
@@ -37,12 +70,18 @@ class RoutePatternParser
         $parts = explode('/', $pattern);
 
         //locate names parameters, map and remove
-        $parts = $this->mapParameters($parts);
+        $parts = $this->parseSegments($parts);
 
         return '/' . implode('/', $parts);
     }
 
-    private function mapParameters(array $segments)
+    /**
+     * Creates a map of named parameters and translates any segment rules.
+     *
+     * @param array $segments
+     * @return array
+     */
+    private function parseSegments(array $segments)
     {
         foreach ($segments as $key => $part)
         {
@@ -60,6 +99,10 @@ class RoutePatternParser
             {
                 $param = '.+';
             }
+            else
+            {
+                $param = $this->translateRule($param);
+            }
 
             $segments[$key] = $param;
         }
@@ -67,8 +110,32 @@ class RoutePatternParser
         return $segments;
     }
 
+    /**
+     * Returns all mapped parameters.
+     *
+     * The array produced is associative where the keys represent the index of
+     * the URI segment and the value is the parameter's name.
+     *
+     * @return array
+     */
     public function getParameterMap()
     {
         return $this->parameterMap;
+    }
+
+    /**
+     * Analyzes a segment for a matching rule and translates it.
+     *
+     * @param $segment
+     * @return string
+     */
+    public function translateRule($segment)
+    {
+        foreach ($this->rules as $id => $rule)
+        {
+            $segment = str_replace($rule, $this->translations[$id], $segment);
+        }
+
+        return $segment;
     }
 }

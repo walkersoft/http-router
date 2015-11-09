@@ -22,6 +22,13 @@ class Router implements RouterInterface
     private $routes;
 
     /**
+     * Pattern parser.
+     *
+     * @var \Fusion\Router\RoutePatternParser
+     */
+    private $parser;
+
+    /**
      * Constructor.
      *
      * Expects an implementation of a TraversableCollection to store the
@@ -30,10 +37,13 @@ class Router implements RouterInterface
      *
      * @param \Fusion\Router\Interfaces\RouteStoreInterface $routes
      *     A collection where routes are stored.
+     * @param RoutePatternParser $parser
+     *     A parsing implementation that will map parameters and translate rules.
      */
-    public function __construct(RouteStoreInterface $routes)
+    public function __construct(RouteStoreInterface $routes, RoutePatternParser $parser)
     {
         $this->routes = $routes;
+        $this->parser = $parser;
     }
 
     /**
@@ -43,28 +53,43 @@ class Router implements RouterInterface
      * pattern of the stored RouteInterface objects in search of a match.  If a
      * match is found the RouteInterface instance that it matches is returned.
      *
+     * This method expects that $target is well formed according to the URI path
+     * details in RFC 3986 section 3.3.
+     *
+     * Calling libraries SHOULD be responsible for manipulating the $target
+     * before calling this method. e.g. Decoding any encoded URL characters.
+     *
      * If a target was unable to be matched to any pattern this method MUST
      * either generate a RouteInterface instance or throw an exception.
      *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.3
      * @param string $target A target to match patterns against.
+     * @param string $method The incoming request method.
      * @return \Fusion\Router\Interfaces\RouteInterface
      * @throws \InvalidArgumentException If $target is not valid.
      * @throws \RuntimeException If a Route pattern could not be matched.
      */
-    public function match($target)
+    public function match($target, $method = 'GET')
     {
         $match = null;
 
-        foreach($this->routes as $route)
+        foreach ($this->routes as $route)
         {
-            if(preg_match("#^{$route->getPattern()}$#i", $target) === 1)
+            if (in_array(strtoupper($method), $route->getMethods()))
             {
-                $match = $route;
-                break;
+                $pattern = $this->parser->parsePattern($route->getPattern());
+
+                if (preg_match("#^{$pattern}$#i", $target) === 1)
+                {
+                    $match = $route;
+                    $match->setPattern($pattern);
+                    $match->setParameters($this->mapSegments($target));
+                    break;
+                }
             }
         }
 
-        if(!$match instanceof RouteInterface)
+        if (!$match instanceof RouteInterface)
         {
             throw new \RuntimeException(
                 sprintf("Unable to match target '%s' to any patterns", $target)
@@ -115,7 +140,7 @@ class Router implements RouterInterface
     {
         $routes = [];
 
-        foreach($this->routes as $key => $route)
+        foreach ($this->routes as $key => $route)
         {
             $routes[$key] = $route;
         }
@@ -124,61 +149,34 @@ class Router implements RouterInterface
     }
 
     /**
-     * Checks if a RouteInterface instance exists at offset.
+     * Separates route target into segments and maps any named parameters.
      *
-     * The return value will be casted to boolean if non-boolean was returned.
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset An offset to check for.
-     * @return bool
-     *
-    public function offsetExists($offset)
+     * @param string $target
+     * @return array
+     */
+    private function mapSegments($target)
     {
-        return $this->routes->has($offset);
-    }
+        $target = ltrim($target, '/');
+        $rebuilt = [];
 
-    /**
-     * Returns the route at the given offset or null if it doesn't exist.
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset The offset to retrieve.
-     * @return \Fusion\Router\Interfaces\RouteInterface|null
-     *
-    public function offsetGet($offset)
-    {
-        return $this->offsetExists($offset) ? $this->routes[$offset] : null;
-    }
+        if (!empty($target))
+        {
+            $segments = explode('/', $target);
+            $map = $this->parser->getParameterMap();
 
-    /**
-     * Route to set at given offset.
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value The value to set.
-     *
-    public function offsetSet($offset, $value)
-    {
-        if($this->offsetExists($offset))
-        {
-            $this->routes[$offset] = $value;
+            for ($i = 0; $i < count($segments); ++$i)
+            {
+                if (array_key_exists($i, $map))
+                {
+                    $rebuilt[$map[$i]] = $segments[$i];
+                }
+                else
+                {
+                    $rebuilt[$i] = $segments[$i];
+                }
+            }
         }
-        else
-        {
-            $this->routes[] = $value;
-        }
-    }
 
-    /**
-     * The route to unset at given offset.
-     *
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset The offset to unset.
-     *
-    public function offsetUnset($offset)
-    {
-        if($this->offsetExists($offset))
-        {
-            unset($this->routes[$offset]);
-        }
-    }*/
+        return $rebuilt;
+    }
 }
