@@ -82,7 +82,6 @@ class Router implements RouterInterface
                 if (preg_match("#^{$pattern}$#i", $target) === 1)
                 {
                     $match = $route;
-                    $match->setPattern($pattern);
                     $match->setParameters($this->mapSegments($target));
                     break;
                 }
@@ -92,7 +91,7 @@ class Router implements RouterInterface
         if (!$match instanceof RouteInterface)
         {
             throw new \RuntimeException(
-                sprintf("Unable to match target '%s' to any patterns", $target)
+                sprintf("Unable to match target '%s' to any patterns.", $target)
             );
         }
 
