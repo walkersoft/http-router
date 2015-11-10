@@ -8,8 +8,9 @@
 
 namespace Fusion\Router;
 
+use Fusion\Router\Interfaces\RoutePatternParserInterface;
 
-class RoutePatternParser
+class RoutePatternParser implements RoutePatternParserInterface
 {
     /**
      * Mapping of named parameters.
@@ -74,7 +75,7 @@ class RoutePatternParser
      * is to ensure parsing is performed correctly. In this case implementations
      * SHOULD undo any normalization afterwards.
      *
-     * @param $pattern
+     * @param string $pattern The pattern to parse.
      * @return string
      * @throws \InvalidArgumentException When $pattern is not a string.
      */
@@ -120,7 +121,8 @@ class RoutePatternParser
      *
      * This array would inform consumers of the parser that in a matching route
      * the third segment in the URI path could be accessed by name (baz in this
-     * case).
+     * case).  Implementations SHOULD NOT be responsible for updating a matched
+     * route with the values of named parameters.
      *
      * @return array
      */
@@ -132,7 +134,7 @@ class RoutePatternParser
     /**
      * Analyzes a segment for a matching rule and translates it.
      *
-     * @param $segment
+     * @param string $segment An individual segment from a URI path.
      * @return string
      */
     private function translateRule($segment)

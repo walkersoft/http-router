@@ -11,6 +11,7 @@ namespace Fusion\Router;
 use Fusion\Router\Interfaces\RouteInterface;
 use Fusion\Router\Interfaces\RouterInterface;
 use Fusion\Router\Interfaces\RouteStoreInterface;
+use Fusion\Router\Interfaces\RoutePatternParserInterface;
 
 class Router implements RouterInterface
 {
@@ -35,12 +36,11 @@ class Router implements RouterInterface
      * RoutesInterface instances.  If one is not provided a default one is
      * created instead.
      *
-     * @param \Fusion\Router\Interfaces\RouteStoreInterface $routes
-     *     A collection where routes are stored.
-     * @param RoutePatternParser $parser
-     *     A parsing implementation that will map parameters and translate rules.
+     * @param RouteStoreInterface $routes A collection where routes are stored.
+     * @param RoutePatternParserInterface $parser A parsing implementation that
+     *     will map parameters and translate rules.
      */
-    public function __construct(RouteStoreInterface $routes, RoutePatternParser $parser)
+    public function __construct(RouteStoreInterface $routes, RoutePatternParserInterface $parser)
     {
         $this->routes = $routes;
         $this->parser = $parser;
