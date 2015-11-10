@@ -9,6 +9,7 @@
 namespace Fusion\Tests;
 
 use Fusion\Router\Route;
+use Fusion\Router\RoutePatternParser;
 use Fusion\Router\Router;
 use Fusion\Router\RouteStore;
 
@@ -21,7 +22,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->router = new Router(new RouteStore());
+        $this->router = new Router(new RouteStore(), new RoutePatternParser());
     }
 
     public function tearDown()
@@ -45,7 +46,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchingRoute()
     {
-        $this->router->addRoute(new Route('/foo/bar'));
+        $this->router->addRoute(new Route('/foo/bar', null, ['GET']));
         $route = $this->router->match('/foo/bar');
         $this->assertInstanceOf('\Fusion\Router\Interfaces\RouteInterface', $route);
     }

@@ -8,6 +8,7 @@
 
 namespace Fusion\Tests;
 
+use Fusion\Router\RoutePatternParser;
 use Fusion\Router\RouteStore;
 use Fusion\Router\RouteFactory;
 use Fusion\Router\RouteGroup;
@@ -25,8 +26,9 @@ class RouteGroupTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->router = new Router(new RouteStore());
+        $this->router = new Router(new RouteStore(), new RoutePatternParser());
         $this->group = new RouteGroup($this->router, new RouteFactory());
+        $this->group->setDefaultMethods(['GET']);
     }
 
     public function tearDown()
@@ -129,11 +131,13 @@ class RouteGroupTest extends \PHPUnit_Framework_TestCase
 
         //Create a route in the second group
         $group = $this->group->createGroup();
+        $group->setDefaultMethods(['GET']);
         $group->route('/foo/baz');
         $this->assertEquals(2, count($this->router->getRoutes()));
 
         //Create a route in the third group
         $group = $group->createGroup();
+        $group->setDefaultMethods(['GET']);
         $group->route('/foo/bam');
         $this->assertEquals(3, count($this->router->getRoutes()));
 
