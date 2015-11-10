@@ -56,8 +56,8 @@ class Router implements RouterInterface
      * This method expects that $target is well formed according to the URI path
      * details in RFC 3986 section 3.3.
      *
-     * Calling libraries SHOULD be responsible for manipulating the $target
-     * before calling this method. e.g. Decoding any encoded URL characters.
+     * Calling libraries SHOULD be responsible for any manipulating of $target
+     * before calling this method. e.g. Decoding characters or normalization.
      *
      * If a target was unable to be matched to any pattern this method MUST
      * either generate a RouteInterface instance or throw an exception.

@@ -114,7 +114,7 @@ class RouteGroup implements RouteGroupInterface
             $pattern = $this->prefix . $pattern;
         }
 
-        $route = $this->routeFactory->make($pattern, $action, $methods);
+        $route = $this->routeFactory->make($pattern);
         $this->currentRoute = $this->router->addRoute($route);
 
         //Assign initial values.
