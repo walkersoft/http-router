@@ -15,67 +15,64 @@ interface RouteInterface
      * Sets the pattern that is used to match a target to the route.
      *
      * When defining routes the implementing router MUST require a pattern to be
-     * present.  Typically the pattern will be used in part or whole for a match
+     * present. Typically the pattern will be used in part or whole for a match
      * using a regular expression.
      *
      * @param string $pattern The route pattern to be used for matching.
-     * @returns self
-     * @throws \InvalidArgumentException When $pattern is not a valid string.
+     * @return self
+     * @throws \InvalidArgumentException When `$pattern` is not a valid string.
      */
     public function setPattern($pattern);
 
     /**
      * Returns the route pattern.
      *
-     * @returns string
+     * @return string
      */
     public function getPattern();
 
     /**
      * Sets an array of HTTP methods the route will respond to.
      *
-     * In addition to matching a URI target to the Route via pattern matching
-     * a router MAY also choose to scrutinize the HTTP request method.
-     *
      * @param array $methods An array of HTTP methods as strings.
-     * @returns self
+     * @return self
      */
     public function setMethods(array $methods);
 
     /**
      * Returns the list of responding HTTP methods as an array.
      *
-     * @returns array
+     * @return array
      */
     public function getMethods();
 
     /**
-     * Sets the action taken when the RouteInterface instance is a match.
+     * Sets the action taken when the `RouteInterface` instance is a match.
      *
      * Actions are domain-specific and may be a number of different things.
      * Essentially the action will specify what will happen in the domain when
-     * the RouteInterface instance is selected as a match.  The RouteInterface
+     * the `RouteInterface` instance is selected as a match. The `RouteInterface`
      * instance SHOULD NOT need to do anything beyond storing the action data.
      *
      * Some examples of an action are:
      *
-     *   - A closure/anonymous function
-     *   - An invokable object
-     *   - A string of a class that will be instantiated/invoked
-     *   - An array with values compatible with call_user_func_array()
+     * -  A closure/anonymous function
+     * -  An invokable object
+     * -  A string of a class that will be instantiated/invoked
+     * -  An array with values compatible with `call_user_func_array()`
      *
      * This list is not exhaustive and only represents some of what would be
      * possible in terms of storing an action.
      *
      * @param mixed $action The action value to store.
-     * @returns self
+     * @return self
      */
     public function setAction($action);
 
     /**
      * Returns the action value.
      *
-     * @returns mixed
+     * @return mixed
      */
     public function getAction();
 
@@ -90,11 +87,13 @@ interface RouteInterface
      *
      * Example:
      *
-     *   array(
+     * <code>
+     * array (
      *     0 => 'show',
      *     1 => 'book',
      *     2 => 5
-     *   )
+     * )
+     * </code>
      *
      * Route patterns may define named parameters that takes a segment and stores
      * it by name in addition to number.  A route pattern will define a named
@@ -103,24 +102,26 @@ interface RouteInterface
      *
      * Example:
      *
-     *   array(
+     * <code>
+     * array(
      *     0 => 'show',
      *     1 => 'book',
      *     'id' => 5
-     *   )
+     * )
+     * </code>     *
      *
      * Implementations of this interface MUST maintain the capability to locate
      * the value of a named parameter under a numerical index if needed.
      *
      * @param array $params An array of parameters.
-     * @returns self
+     * @return self
      */
     public function setParameters(array $params);
 
     /**
      * Returns all parameters as an array.
      *
-     * @returns array
+     * @return array
      */
     public function getParameters();
 
@@ -128,7 +129,7 @@ interface RouteInterface
      * Returns a specific parameter at its numerical key or null if not found.
      *
      * @param int $key The key where the parameter is stored.
-     * @returns mixed|null
+     * @return mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getParameter($key);
@@ -139,7 +140,7 @@ interface RouteInterface
      * Named parameters SHOULD be considered any parameter value whose key is
      * not numeric.
      *
-     * @returns array
+     * @return array
      */
     public function getNamedParameters();
 
@@ -147,7 +148,7 @@ interface RouteInterface
      * Returns a specific named parameter at its named key or null if not found.
      *
      * @param string $key The key where the named parameter is stored.
-     * @returns mixed|null
+     * @return mixed|null
      * @throws \InvalidArgumentException When an invalid key is given.
      */
     public function getNamedParameter($key);
