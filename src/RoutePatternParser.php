@@ -11,17 +11,26 @@ namespace Fusion\Router;
 
 class RoutePatternParser
 {
-    /** @var string */
-    private $parsedPattern;
-
-    /** @var array */
+    /**
+     * Mapping of named parameters.
+     *
+     * This array contains only numeric keys whose value represent the index and
+     * name of the URI path segment that contained a named parameter.
+     *
+     * E.g.: `/foo/bar/:baz` will create an array with one element: [2 => 'baz']
+     *
+     * @var array
+     */
     private $parameterMap;
-
-    /** @var string */
-    private $target;
 
     /**
      * List of acceptable rules.
+     *
+     * Rules are placeholders that will be translated to various regular
+     * expression values that will be used by the pattern matching implementation.
+     *
+     * There MUST be an accompanying element in `self::translations` in order
+     * for a translation to take place.
      *
      * @var array
      */
@@ -33,7 +42,10 @@ class RoutePatternParser
     ];
 
     /**
-     * Regex translation of the rules.
+     * Regular expression translations for the various rules.
+     *
+     * There MUST be an accompanying element in `self::rules` in order for a
+     * translation to take place.
      *
      * @var array
      */
@@ -76,6 +88,35 @@ class RoutePatternParser
     }
 
     /**
+     * Returns all mapped parameters.
+     *
+     * The array produced is associative where the keys represent the index of
+     * the URI segment and the value is the parameter's name.
+     *
+     * @return array
+     */
+    public function getParameterMap()
+    {
+        return $this->parameterMap;
+    }
+
+    /**
+     * Analyzes a segment for a matching rule and translates it.
+     *
+     * @param $segment
+     * @return string
+     */
+    private function translateRule($segment)
+    {
+        foreach ($this->rules as $id => $rule)
+        {
+            $segment = str_replace($rule, $this->translations[$id], $segment);
+        }
+
+        return $segment;
+    }
+
+    /**
      * Creates a map of named parameters and translates any segment rules.
      *
      * @param array $segments
@@ -108,34 +149,5 @@ class RoutePatternParser
         }
 
         return $segments;
-    }
-
-    /**
-     * Returns all mapped parameters.
-     *
-     * The array produced is associative where the keys represent the index of
-     * the URI segment and the value is the parameter's name.
-     *
-     * @return array
-     */
-    public function getParameterMap()
-    {
-        return $this->parameterMap;
-    }
-
-    /**
-     * Analyzes a segment for a matching rule and translates it.
-     *
-     * @param $segment
-     * @return string
-     */
-    public function translateRule($segment)
-    {
-        foreach ($this->rules as $id => $rule)
-        {
-            $segment = str_replace($rule, $this->translations[$id], $segment);
-        }
-
-        return $segment;
     }
 }
