@@ -103,7 +103,7 @@ interface RouteInterface
      * Example:
      *
      * <code>
-     * array(
+     * array (
      *     0 => 'show',
      *     1 => 'book',
      *     'id' => 5
