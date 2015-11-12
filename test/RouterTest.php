@@ -51,6 +51,37 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Fusion\Router\Interfaces\RouteInterface', $route);
     }
 
+    public function testMatchingEmptyRoute()
+    {
+        $this->router->addRoute(new Route('/', null, ['GET']));
+        $route = $this->router->match('/');
+        $this->assertInstanceOf('\Fusion\Router\Interfaces\RouteInterface', $route);
+    }
+
+    public function testMatchingRouteWithNamedParams()
+    {
+        $this->router->addRoute(new Route('/foo/bar/:baz', null, ['GET']));
+        $route = $this->router->match('/foo/bar/blah');
+        $this->assertInstanceOf('\Fusion\Router\Interfaces\RouteInterface', $route);
+        $this->assertEquals('blah', $route->getNamedParameter('baz'));
+    }
+
+    public function testMatchingRouteWithRules()
+    {
+        $this->router->addRoute(new Route('/foo/bar/[alpha]', null, ['GET']));
+        $route = $this->router->match('/foo/bar/blah');
+        $this->assertInstanceOf('\Fusion\Router\Interfaces\RouteInterface', $route);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testNotMatchingRouteWithRules()
+    {
+        $this->router->addRoute(new Route('/foo/bar/[alpha]', null, ['GET']));
+        $this->router->match('/foo/bar/8675309');
+    }
+
     /**
      * @expectedException \RuntimeException
      */

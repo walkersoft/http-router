@@ -14,21 +14,18 @@ interface RouteGroupInterface
     /**
      * Creates and stores a route.
      *
-     * Handles the instantiation of a Route object and initializes it with the
-     * values provided or default values if necessary.
+     * Handles the instantiation of a `RouteInterface` instance and initializes
+     * it with the values provided or default values if necessary.
      *
-     * All Route objects MUST store at a minimum the matching pattern, an action,
-     * and an HTTP method that acts as an additional.  Only the pattern must be
-     * supplied by the user.  A Route is capable of having no action assigned and
-     * can respond to any HTTP method.
+     * All `RouteInterface` instances MUST store at a minimum the matching
+     * pattern, an action, and an HTTP method. A pattern is all that is required
+     * to be present when creating a `RouteInterface` instance.
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
-     *
-     * @see \Fusion\Router\Router::createRoute()
+     * @see \Fusion\Router\Interfaces\RouterInterface::addRoute()
      * @param string $pattern The route pattern to be used for matching.
      * @param mixed $action Associated action to be taken.
      * @param array $methods An array with all responding methods.
-     * @returns self
+     * @return self
      * @throws \InvalidArgumentException When any of the parameters are not valid.
      */
     public function route($pattern, $action = null, array $methods = []);
@@ -39,75 +36,67 @@ interface RouteGroupInterface
      * Actions are implementation-specific.  Actions may be strings that map to
      * a class name, a closure, or even an object that may be invoked directly.
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
-     *
-     * @see \Fusion\Router\Route::setAction()
+     * @see \Fusion\Router\Interfaces\RouteInterface::setAction()
      * @param mixed $action The action to assign.
-     * @returns self
-     * @throws \InvalidArgumentException If $action is not a valid action for
+     * @return self
+     * @throws \InvalidArgumentException If `$action` is not a valid action for
      *     a given domain context.
      * @throws \RuntimeException When there is no route to update.
      */
     public function toAction($action);
 
     /**
-     * Assigns multiple HTTP methods that the Route will match.
+     * Assigns multiple HTTP methods to the `RouteInterface` instance.
      *
-     * A Route can be restricted or permissive when matching based on one or more
-     * HTTP methods.  e.g.: A single endpoint may be defined twice, under two
-     * different methods (GET and POST) and also two different actions (ListAction
-     * and UpdateAction).
-     *
-     * This method will return itself to facilitate chaining using a fluent interface.
-     *
-     * @param array $methods Array of strings representing methods that the Route
-     *     will match up against.
-     * @returns self
-     * @throws \InvalidArgumentException When any of $method are not valid.
-     * @throws \RuntimeException When there is no route to update.
+     * @see \Fusion\Router\Interfaces\RouteGroupInterface::fromMethod()
+     * @param array $methods Array of strings representing methods that the
+     *     `RouteInterface` instance will match up against.
+     * @return self
+     * @throws \InvalidArgumentException When any of `$method` are not valid.
+     * @throws \RuntimeException When there is no `RouteInterface` instance
+     *     to update.
      */
     public function fromMethods(array $methods);
 
     /**
-     * Assigns a single HTTP method that the route will match.
+     * Assigns a single HTTP method to the `RouteInterface` instance.
      *
-     * A Route can be restricted or permissive when matching based on one or more
-     * HTTP methods.  e.g.: A single endpoint may be defined twice, under two
-     * different methods (GET and POST) and also two different actions (ListAction
-     * and UpdateAction).
+     * A `RouteInterface` instance SHOULD primarily be matched based on its
+     * pattern, however the incoming request method can play a part as well.
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
+     * For example, a particular endpoint may be `/show/articles` which will
+     * generate a listing of articles.  This endpoint makes the most sense as a
+     * match when the request method is `GET`.  Another endpoint may be
+     * `/update/article/5` and makes the most sense as a match when using a
+     * different HTTP method like `PUT` or `POST`.
      *
-     * @param string $method Array of strings representing methods that the Route
-     *     will match up against.
-     * @returns self
-     * @throws \InvalidArgumentException When $method is not valid.
-     * @throws \RuntimeException When there is no route to update.
+     * @param string $method String representing methods that the `RouteInterface`
+     *     instance will match up against.
+     * @return self
+     * @throws \InvalidArgumentException When `$method` is not valid.
+     * @throws \RuntimeException When there is no `RouteInterface` instance
+     *     to update.
      */
     public function fromMethod($method);
 
     /**
-     * Specifies default HTTP methods that will apply to any newly created Route.
+     * Sets the default HTTP method(s) assigned to new `RouteInterface` instances.
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
-     *
-     * @param array $methods An array of default HTTP methods to assign to a route
-     *     when no other methods are specified.
-     * @returns self
+     * @param array $methods An array of default HTTP methods to assign to a
+     *     `RouteInterface` when no other methods are specified.
+     * @return self
      */
     public function setDefaultMethods(array $methods);
 
     /**
-     * Sets a default action for a Route.
+     * Sets a default action assigned to new `RouteInterface` instances.
      *
      * Useful in situations where a fallback action should be taken when a
-     * specific action is not assigned with the route() or toAction() methods.
+     * specific action is not assigned to the `RouteInterface` instance(s).
      *
-     * This method will return itself to facilitate chaining using a fluent interface.
-     *
-     * @param mixed $action A default action to assign to all created routes.
-     * @returns self
-     * @throws \InvalidArgumentException If $action is not a valid action for
+     * @param mixed $action A default action to assign
+     * @return self
+     * @throws \InvalidArgumentException If `$action` is not a valid action for
      *     a given domain context.
      */
     public function setDefaultAction($action);
@@ -122,31 +111,34 @@ interface RouteGroupInterface
      * For example, an application that is managing books might have the following
      * endpoints:
      *
-     *   /books/list      (lists all books)
-     *   /books/show/:id  (shows details for book with the specified ID number)
-     *   /books/edit/:id  (edit details for book with the specified ID number)
+     * <code>
+     * /books/list       // lists all books
+     * /books/show/:id   // shows details for book with the specified ID number
+     * /books/edit/:id   // edit details for book with the specified ID number
+     * </code>
      *
      * In this case the `/books` portion of the endpoints is redundant. By
      * declaring a prefix the endpoint patterns can focus on their specific use
      * by declaring only the differing portions.
      *
-     * Example:
+     * <code>
+     * $group->setPrefix('/books');
+     * $group->route('/list')        //pattern: /books/list
+     *       ->route('/show/:id')    //pattern: /books/show/:id
+     *       ->route('/edit/:id');   //pattern: /books/edit/:id
+     * </code>
      *
-     *   $group->setPrefix('/books');
-     *   $group->route('/list')        //pattern: /books/list
-     *         ->route('/show/:id')    //pattern: /books/show/:id
-     *         ->route('/edit/:id');   //pattern: /books/edit/:id
-     *
-     * @param string $prefix Sets the prefix to assign to all route patterns.
-     * @returns self
-     * @throws \InvalidArgumentException If $prefix is not valid.
+     * @param string $prefix Sets the prefix to assign to all newly created
+     *     route patterns.
+     * @return self
+     * @throws \InvalidArgumentException If `$prefix` is not valid.
      */
     public function setPrefix($prefix);
 
     /**
-     * Creates and returns a new RouteGroup.
+     * Creates and returns a new RouteGroupInterface instance.
      *
-     * @returns \Fusion\Router\RouteGroup
+     * @return \Fusion\Router\Interfaces\RouteGroupInterface
      */
     public function createGroup();
 }

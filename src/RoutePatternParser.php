@@ -8,20 +8,30 @@
 
 namespace Fusion\Router;
 
+use Fusion\Router\Interfaces\RoutePatternParserInterface;
 
-class RoutePatternParser
+class RoutePatternParser implements RoutePatternParserInterface
 {
-    /** @var string */
-    private $parsedPattern;
-
-    /** @var array */
+    /**
+     * Mapping of named parameters.
+     *
+     * This array contains only numeric keys whose value represent the index and
+     * name of the URI path segment that contained a named parameter.
+     *
+     * E.g.: `/foo/bar/:baz` will create an array with one element: [2 => 'baz']
+     *
+     * @var array
+     */
     private $parameterMap;
-
-    /** @var string */
-    private $target;
 
     /**
      * List of acceptable rules.
+     *
+     * Rules are placeholders that will be translated to various regular
+     * expression values that will be used by the pattern matching implementation.
+     *
+     * There MUST be an accompanying element in `self::translations` in order
+     * for a translation to take place.
      *
      * @var array
      */
@@ -33,7 +43,10 @@ class RoutePatternParser
     ];
 
     /**
-     * Regex translation of the rules.
+     * Regular expression translations for the various rules.
+     *
+     * There MUST be an accompanying element in `self::rules` in order for a
+     * translation to take place.
      *
      * @var array
      */
@@ -52,8 +65,28 @@ class RoutePatternParser
         $this->parameterMap = [];
     }
 
+    /**
+     * Parses a route pattern and returns the output of the operation as a string.
+     *
+     * Parser implementations MUST analyze the incoming pattern for any regular
+     * expression rules to translate and named parameters defined in the pattern.
+     *
+     * Implementations SHOULD NOT normalize the pattern unless the normalization
+     * is to ensure parsing is performed correctly. In this case implementations
+     * SHOULD undo any normalization afterwards.
+     *
+     * @param string $pattern The pattern to parse.
+     * @return string
+     * @throws \InvalidArgumentException When $pattern is not a string.
+     */
     public function parsePattern($pattern)
     {
+        if (!is_string($pattern))
+        {
+            throw new \InvalidArgumentException(
+                sprintf('Pattern to parse must be presented as a string. % given.', gettype($pattern))
+            );
+        }
         //if the pattern is only a '/', there is nothing to do
         if ($pattern == '/')
         {
@@ -73,6 +106,45 @@ class RoutePatternParser
         $parts = $this->parseSegments($parts);
 
         return '/' . implode('/', $parts);
+    }
+
+    /**
+     * Returns all mapped parameters.
+     *
+     * The array produced is associative where the keys represent the index of
+     * the URI segment and the value is the parameter's name.
+     *
+     * E.g.: Given a route with a pattern of `/foo/bar/:baz`, with `:baz`
+     * representing a named parameter, the following array would be produced:
+     *
+     *     [2 => 'baz']
+     *
+     * This array would inform consumers of the parser that in a matching route
+     * the third segment in the URI path could be accessed by name (baz in this
+     * case).  Implementations SHOULD NOT be responsible for updating a matched
+     * route with the values of named parameters.
+     *
+     * @return array
+     */
+    public function getParameterMap()
+    {
+        return $this->parameterMap;
+    }
+
+    /**
+     * Analyzes a segment for a matching rule and translates it.
+     *
+     * @param string $segment An individual segment from a URI path.
+     * @return string
+     */
+    private function translateRule($segment)
+    {
+        foreach ($this->rules as $id => $rule)
+        {
+            $segment = str_replace($rule, $this->translations[$id], $segment);
+        }
+
+        return $segment;
     }
 
     /**
@@ -108,34 +180,5 @@ class RoutePatternParser
         }
 
         return $segments;
-    }
-
-    /**
-     * Returns all mapped parameters.
-     *
-     * The array produced is associative where the keys represent the index of
-     * the URI segment and the value is the parameter's name.
-     *
-     * @return array
-     */
-    public function getParameterMap()
-    {
-        return $this->parameterMap;
-    }
-
-    /**
-     * Analyzes a segment for a matching rule and translates it.
-     *
-     * @param $segment
-     * @return string
-     */
-    public function translateRule($segment)
-    {
-        foreach ($this->rules as $id => $rule)
-        {
-            $segment = str_replace($rule, $this->translations[$id], $segment);
-        }
-
-        return $segment;
     }
 }
