@@ -36,7 +36,11 @@ interface RoutePatternParserInterface
      * E.g.: Given a route with a pattern of `/foo/bar/:baz`, with `:baz`
      * representing a named parameter, the following array would be produced:
      *
-     *     [2 => 'baz']
+     * <code>
+     * array (
+     *     2 => 'baz'
+     * )
+     * </code>
      *
      * This array would inform consumers of the parser that in a matching endpoint
      * the third segment in the URI path could be accessed by name (`baz` in this

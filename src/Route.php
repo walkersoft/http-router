@@ -104,7 +104,15 @@ class Route implements RouteInterface
      */
     public function setMethods(array $methods)
     {
+        //Callback to make methods uppercase
+        $uppercase = function (&$method, $key)
+        {
+            $method = strtoupper($method);
+        };
+
+        array_walk($methods, $uppercase);
         $this->methods = $methods;
+
         return $this;
     }
 

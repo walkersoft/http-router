@@ -47,6 +47,10 @@ interface RouteInterface
      * by implementations of the `RouterInterface::match()` method to determine
      * if a particular `RouteInterface` instance is the best match.
      *
+     * Although unnecessary for the purposes of routing an implementation MAY
+     * choose to normalize method values to UPPERCASE as HTTP methods are
+     * generally presented.
+     *
      * @param array $methods An array of HTTP methods as strings.
      * @return self
      */
