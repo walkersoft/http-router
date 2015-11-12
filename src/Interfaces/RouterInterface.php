@@ -45,7 +45,7 @@ interface RouterInterface
     public function addRoute(RouteInterface $route);
 
     /**
-     * Gets a `RouteInterface` instance by ID number in the route collection.
+     * Gets a `RouteInterface` instance by ID in the `RouteStoreInterface` instance.
      *
      * @param int $id The instance ID number.
      * @return \Fusion\Router\Interfaces\RouteInterface
@@ -55,7 +55,7 @@ interface RouterInterface
     /**
      * Gets all stored `RouteInterface` instances as an array.
      *
-     * @returns array
+     * @return array
      */
     public function getRoutes();
 }
