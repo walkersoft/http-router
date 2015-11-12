@@ -202,7 +202,7 @@ class Route implements RouteInterface
         if(!is_string($key))
         {
             throw new \InvalidArgumentException(
-                sprintf('Named parameter key must be a string. %s given', gettype($key))
+                sprintf('Named parameter key must be a string. %s given.', gettype($key))
             );
         }
         $param = null;
