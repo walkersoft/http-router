@@ -2,7 +2,7 @@
     "name": "crackertastic/fusion.router",
     "require": {
         "php": ">=5.4",
-        "crackertastic/fusion.collection": "dev-master"
+        "fusion-php/collection": "0.9"
     },
     "repositories": [
         {
