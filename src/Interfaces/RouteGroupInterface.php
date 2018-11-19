@@ -48,7 +48,7 @@ interface RouteGroupInterface
     /**
      * Assigns multiple HTTP methods to the `RouteInterface` instance.
      *
-     * @see \Fusion\Router\Interfaces\RouteGroupInterface::fromMethod()
+     * @see \Fusion\Router\Interfaces\RouteInterface::setMethods()
      * @param array $methods Array of strings representing methods that the
      *     `RouteInterface` instance will match up against.
      * @return self
@@ -61,15 +61,7 @@ interface RouteGroupInterface
     /**
      * Assigns a single HTTP method to the `RouteInterface` instance.
      *
-     * A `RouteInterface` instance SHOULD primarily be matched based on its
-     * pattern, however the incoming request method can play a part as well.
-     *
-     * For example, a particular endpoint may be `/show/articles` which will
-     * generate a listing of articles.  This endpoint makes the most sense as a
-     * match when the request method is `GET`.  Another endpoint may be
-     * `/update/article/5` and makes the most sense as a match when using a
-     * different HTTP method like `PUT` or `POST`.
-     *
+     * @see \Fusion\Router\Interfaces\RouteInterface::setMethods()
      * @param string $method String representing methods that the `RouteInterface`
      *     instance will match up against.
      * @return self
@@ -82,8 +74,15 @@ interface RouteGroupInterface
     /**
      * Sets the default HTTP method(s) assigned to new `RouteInterface` instances.
      *
+     * This application of any HTTP methods assigned as a result of this method
+     * SHOULD only happen when a new `RouteInterface` instance is generated from
+     * the `RouteGroupInterface::route()` method. In other words, the results of
+     * any attempt to assign HTTP methods MUST take precedence over HTTP methods
+     * assigned with this method.
+     *
+     * @see \Fusion\Router\Interfaces\RouteInterface::setMethods()
      * @param array $methods An array of default HTTP methods to assign to a
-     *     `RouteInterface` when no other methods are specified.
+     *     `RouteInterface` instance when no other methods are specified.
      * @return self
      */
     public function setDefaultMethods(array $methods);
@@ -94,6 +93,7 @@ interface RouteGroupInterface
      * Useful in situations where a fallback action should be taken when a
      * specific action is not assigned to the `RouteInterface` instance(s).
      *
+     * @see \Fusion\Router\Interfaces\RouteInterface::setAction()
      * @param mixed $action A default action to assign
      * @return self
      * @throws \InvalidArgumentException If `$action` is not a valid action for
@@ -104,17 +104,17 @@ interface RouteGroupInterface
     /**
      * Specifies a prefix to assign to patterns.
      *
-     * Although patterns may be structured per the requirements of the specific
-     * application it may become tedious to re-type route patterns that begin
-     * with the same text.
+     * When creating endpoints for an application there may become a situation
+     * when many endpoints will have similar text at the beginning of an endpoint
+     * where a resource representation is general.
      *
      * For example, an application that is managing books might have the following
      * endpoints:
      *
      * <code>
      * /books/list       // lists all books
-     * /books/show/:id   // shows details for book with the specified ID number
-     * /books/edit/:id   // edit details for book with the specified ID number
+     * /books/show/:id   // shows details for a book with the specified ID number
+     * /books/edit/:id   // edit details for a book with the specified ID number
      * </code>
      *
      * In this case the `/books` portion of the endpoints is redundant. By
@@ -127,6 +127,9 @@ interface RouteGroupInterface
      *       ->route('/show/:id')    //pattern: /books/show/:id
      *       ->route('/edit/:id');   //pattern: /books/edit/:id
      * </code>
+     *
+     * This method MUST only edit newly created `RouteInterface` instances and
+     * MUST NOT retroactively edit previously created `RouteInterface` instances.
      *
      * @param string $prefix Sets the prefix to assign to all newly created
      *     route patterns.

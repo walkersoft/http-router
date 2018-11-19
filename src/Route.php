@@ -104,7 +104,15 @@ class Route implements RouteInterface
      */
     public function setMethods(array $methods)
     {
+        //Callback to make methods uppercase
+        $uppercase = function (&$method, $key)
+        {
+            $method = strtoupper($method);
+        };
+
+        array_walk($methods, $uppercase);
         $this->methods = $methods;
+
         return $this;
     }
 
@@ -202,7 +210,7 @@ class Route implements RouteInterface
         if(!is_string($key))
         {
             throw new \InvalidArgumentException(
-                sprintf('Named parameter key must be a string. %s given', gettype($key))
+                sprintf('Named parameter key must be a string. %s given.', gettype($key))
             );
         }
         $param = null;

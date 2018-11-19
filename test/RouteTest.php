@@ -59,6 +59,14 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('POST', $this->route->getMethods()[1]);
     }
 
+    public function testSettingMethodsAreMadeIntoUppercase()
+    {
+        $this->assertInstanceOf('\Fusion\Router\Route', $this->route->setMethods(['get', 'post']));
+        $this->assertInternalType('array', $this->route->getMethods());
+        $this->assertEquals(2, count($this->route->getMethods()));
+        $this->assertEquals('POST', $this->route->getMethods()[1]);
+    }
+
     public function testSettingParameters()
     {
         $this->assertInstanceOf('\Fusion\Router\Route', $this->route->setParameters(['show', 'books', 5]));

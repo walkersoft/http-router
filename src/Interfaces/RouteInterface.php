@@ -12,11 +12,11 @@ namespace Fusion\Router\Interfaces;
 interface RouteInterface
 {
     /**
-     * Sets the pattern that is used to match a target to the route.
+     * Sets the pattern used to match a target to a `RouteInterface` instance.
      *
      * When defining routes the implementing router MUST require a pattern to be
-     * present. Typically the pattern will be used in part or whole for a match
-     * using a regular expression.
+     * present. Typically the pattern will be used in when matching a target to
+     * a `RouteInterface` instance. E.g.: regular expression.
      *
      * @param string $pattern The route pattern to be used for matching.
      * @return self
@@ -32,7 +32,24 @@ interface RouteInterface
     public function getPattern();
 
     /**
-     * Sets an array of HTTP methods the route will respond to.
+     * Sets an array of HTTP methods the `RouteInstance` instance scrutinizes.
+     *
+     * A `RouteInterface` instance SHOULD primarily be matched based on its
+     * pattern, however the incoming request method can play a part as well.
+     *
+     * For example, a particular endpoint may be `/show/articles` which will
+     * generate a listing of articles.  This endpoint makes the most sense as a
+     * match when the request method is `GET`.  Another endpoint may be
+     * `/update/article/5` and makes the most sense as a match when using a
+     * different HTTP method like `PUT` or `POST`.
+     *
+     * This method will store acceptable HTTP request methods and can be used
+     * by implementations of the `RouterInterface::match()` method to determine
+     * if a particular `RouteInterface` instance is the best match.
+     *
+     * Although unnecessary for the purposes of routing an implementation MAY
+     * choose to normalize method values to UPPERCASE as HTTP methods are
+     * generally presented.
      *
      * @param array $methods An array of HTTP methods as strings.
      * @return self
@@ -108,7 +125,7 @@ interface RouteInterface
      *     1 => 'book',
      *     'id' => 5
      * )
-     * </code>     *
+     * </code>
      *
      * Implementations of this interface MUST maintain the capability to locate
      * the value of a named parameter under a numerical index if needed.
